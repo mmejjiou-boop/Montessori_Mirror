@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Produits{% endblock %}
+
+{% block content %}
+    <h2 class="text-xl font-semibold text-gray-700 mb-6">Dashboard Produits</h2>
+
+    <div class="flex flex-col md:flex-row gap-3 mb-4">
+        <input 
+            type="text" 
+            id="search" 
+            placeholder="Rechercher un produit..." 
+            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-sm"
+            onkeyup="filterTable()"
+        >
+
+        <form method="GET" action="{{ path('app_products') }}" class="flex gap-3">
+            <select 
+                name="category" 
+                onchange="this.form.submit()"
+                class="px-4 py-3 border border-gray-300 rounded-lg bg-white shadow-sm text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+                <option value="">Toutes les catégories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id_category }}" class="text-gray-900" {% if current_category == cat.id_category ~ '' %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select 
+                name="sort_price" 
+                onchange="this.form.submit()"
+                class="px-4 py-3 border border-gray-300 rounded-lg bg-white shadow-sm text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+                <option value="">Tri par défaut (nom)</option>
+                <option value="asc"  {% if current_sort == 'asc'  %}selected{% endif %}>Prix croissant</option>
+                <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Prix décroissant</option>
+            </select>
+
+            {% if current_category or current_sort %}
+                <a href="{{ path('app_products') }}" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-semibold transition-colors">
+                    Réinitialiser
+                </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+        <table class="w-full text-sm text-left">
+            <thead class="bg-sky-700 text-white">
+                <tr>
+                    <th class="px-6 py-4">Nom</th>
+                    <th class="px-6 py-4">Référence</th>
+                    <th class="px-6 py-4">Prix TTC</th>
+                    <th class="px-6 py-4">Quantité</th>
+                    <th class="px-6 py-4">En stock</th>
+                    <th class="px-6 py-4">Catégorie</th>
+                    <th class="px-6 py-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+               {% for product in products %}
+<tr class="hover:bg-gray-50 transition-colors">
+    <td class="px-6 py-3 font-medium text-gray-800">
+        <a href="/products/{{ product.id_product }}" class="hover:text-sky-700">{{ product.name }}</a>
+    </td>
+    <td class="px-6 py-3 text-gray-600">{{ product.reference }}</td>
+    <td class="px-6 py-3 text-gray-800 font-semibold">{{ product.price }} €</td>
+    <td class="px-6 py-3 text-gray-600">{{ product.quantity }}</td>
+    <td class="px-6 py-3">
+        {% if product.in_stock == 'Oui' %}
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Oui</span>
+        {% else %}
+            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Non</span>
+        {% endif %}
+    </td>
+    <td class="px-6 py-3 text-gray-600">{{ product.category_name ?? '-' }}</td>
+    <td class="px-6 py-3">
+        <div class="flex gap-2">
+            <a href="{{ path('app_product_edit', {id: product.id_product}) }}" 
+                class="bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                Éditer
+            </a>
+            <form method="POST" action="{{ path('app_product_delete', {id: product.id_product}) }}"
+                  onsubmit="return confirm('Supprimer {{ product.name }} ?')">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id_product) }}">
+                <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                     Supprimer
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-sm text-gray-400 mt-3">{{ products|length }} produit(s) affiché(s)</p>
+
+    <script>
+    function filterTable() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+    </script>
+{% endblock %}

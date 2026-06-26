@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+    <a href="/products" class="text-green-600 hover:text-green-700 font-semibold mb-6 inline-block">← Retour au dashboard</a>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">{{ product.name }}</h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+            <p class="text-gray-500 text-sm mb-1">Référence</p>
+            <p class="text-gray-800 font-bold text-lg">{{ product.reference }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+            <p class="text-gray-500 text-sm mb-1">Prix TTC</p>
+            <p class="text-gray-800 font-bold text-lg">{{ product.price }} €</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+            <p class="text-gray-500 text-sm mb-1">Quantité</p>
+            <p class="text-gray-800 font-bold text-lg">{{ product.quantity }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+            <p class="text-gray-500 text-sm mb-1">En stock</p>
+            {% if product.in_stock == 'Oui' %}
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">Oui</span>
+            {% else %}
+                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">Non</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6 mb-8">
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Dimensions et Poids</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center">
+                <p class="text-gray-500 text-sm mb-1">Largeur</p>
+                <p class="text-gray-800 font-bold">{{ product.width }} cm</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-500 text-sm mb-1">Hauteur</p>
+                <p class="text-gray-800 font-bold">{{ product.height }} cm</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-500 text-sm mb-1">Profondeur</p>
+                <p class="text-gray-800 font-bold">{{ product.depth }} cm</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-500 text-sm mb-1">Poids</p>
+                <p class="text-gray-800 font-bold">{{ product.weight }} kg</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Historique des ventes</h3>
+        {% if history is empty %}
+            <p class="text-gray-500">Aucun historique disponible pour ce produit.</p>
+        {% else %}
+            <canvas id="historyChart" height="100"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                const labels = {{ history|map(h => h.month)|json_encode|raw }};
+                const entries = {{ history|map(h => h.entries)|json_encode|raw }};
+                const exits = {{ history|map(h => h.exits)|json_encode|raw }};
+                new Chart(document.getElementById('historyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Entrées', data: entries, backgroundColor: 'rgba(76, 175, 80, 0.7)' },
+                            { label: 'Sorties', data: exits, backgroundColor: 'rgba(244, 67, 54, 0.7)' }
+                        ]
+                    },
+                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                });
+            </script>
+        {% endif %}
+    </div>
+{% endblock %}

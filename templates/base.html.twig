@@ -1,24 +1,52 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Montessori Store{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+    <!-- Sidebar -->
+    <aside class="w-64 min-h-screen bg-sky-800 text-white flex flex-col fixed left-0 top-0">
+        <div class="px-6 py-6 border-b border-sky-700">
+            <img src="/logo.png" alt="Logo" class="h-12 object-contain">
+        </div>
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+        <nav class="flex-1 px-4 py-6 flex flex-col gap-2">
+            <a href="{{ path('app_products') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-colors
+               {{ app.request.attributes.get('_route') == 'app_products' ? 'bg-sky-600' : 'hover:bg-sky-700' }}">
+                 Produits
+            </a>
+            <a href="{{ path('app_commandes') }}" 
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-colors
+               {{ app.request.attributes.get('_route') == 'app_commandes' ? 'bg-sky-600' : 'hover:bg-sky-700' }}">
+                 Passer commande
+            </a>
+            <a href="{{ path('app_product_new') }}" 
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-colors
+            {{ app.request.attributes.get('_route') == 'app_product_new' ? 'bg-sky-600' : 'hover:bg-sky-700' }}">
+                Ajouter un produit
+            </a>
+            <a href="{{ path('app_mentions_legales') }}" 
+   class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-colors
+   {{ app.request.attributes.get('_route') == 'app_mentions_legales' ? 'bg-sky-600' : 'hover:bg-sky-700' }}">
+     Mentions légales
+</a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-sky-700">
+            <a href="/logout" class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors">
+                 Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="ml-64 flex-1 p-8">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
 </html>
