@@ -268,21 +268,17 @@ public function edit(int $id, Request $request, Connection $connection): Respons
         }
 
         $history = [];
-        try {
             $historySql = "
                 SELECT 
-                    DATE_FORMAT(date_add, '%Y-%m') as month,
-                    SUM(CASE WHEN physical_quantity > 0 THEN physical_quantity ELSE 0 END) as entries,
-                    SUM(CASE WHEN physical_quantity < 0 THEN ABS(physical_quantity) ELSE 0 END) as exits
-                FROM ps_stock_mvt
-                WHERE id_product = :id
-                GROUP BY DATE_FORMAT(date_add, '%Y-%m')
+                    DATE_FORMAT(o.date_add, '%Y-%m') as month,
+                    SUM(od.product_quantity) as exits
+                FROM ps_order_detail od
+                LEFT JOIN ps_orders o ON od.id_order = o.id_order
+                WHERE od.product_id = :id
+                GROUP BY DATE_FORMAT(o.date_add, '%Y-%m')
                 ORDER BY month ASC
             ";
             $history = $connection->fetchAllAssociative($historySql, ['id' => $id]);
-        } catch (\Exception $e) {
-            $history = [];
-        }
 
         return $this->render('product/show.html.twig', [
             'product' => $product,

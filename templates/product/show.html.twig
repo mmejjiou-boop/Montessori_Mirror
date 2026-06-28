@@ -59,20 +59,28 @@
             <canvas id="historyChart" height="100"></canvas>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
-                const labels = {{ history|map(h => h.month)|json_encode|raw }};
-                const entries = {{ history|map(h => h.entries)|json_encode|raw }};
-                const exits = {{ history|map(h => h.exits)|json_encode|raw }};
-                new Chart(document.getElementById('historyChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: 'Entrées', data: entries, backgroundColor: 'rgba(76, 175, 80, 0.7)' },
-                            { label: 'Sorties', data: exits, backgroundColor: 'rgba(244, 67, 54, 0.7)' }
-                        ]
-                    },
-                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-                });
+const labels = {{ history|map(h => h.month)|json_encode|raw }};
+const exits = {{ history|map(h => h.exits)|json_encode|raw }};
+
+new Chart(document.getElementById('historyChart'), {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            { 
+                label: 'Quantité vendue', 
+                data: exits, 
+                backgroundColor: 'rgba(14, 165, 233, 0.7)',
+                borderColor: 'rgba(14, 165, 233, 1)',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: { 
+        responsive: true, 
+        scales: { y: { beginAtZero: true } } 
+    }
+});
             </script>
         {% endif %}
     </div>

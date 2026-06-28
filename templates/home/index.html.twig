@@ -1,20 +1,27 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Montessori Store – Gestion des stocks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-sky-100 min-h-screen flex items-center justify-center">
 
-{% block title %}Hello HomeController!{% endblock %}
+    <div class="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full text-center">
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+        <img src="/logo.png" alt="Logo Montessori Store" class="h-20 mx-auto mb-6 object-contain">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <h1 class="text-2xl font-bold text-sky-800 mb-2">Montessori Store</h1>
+        <p class="text-gray-500 mb-8 text-sm">Plateforme de gestion des stocks et des commandes</p>
+        <p>ici c'est la page d'acceuil ou on peut mettre ce que je veux</p>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/MAMP/htdocs/MontessoriMirror/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>C:/MAMP/htdocs/MontessoriMirror/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
-{% endblock %}
+        <a href="{{ path('app_login') }}"
+           class="block w-full bg-sky-700 hover:bg-sky-800 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
+            Se connecter
+        </a>
+
+        <p class="mt-6 text-xs text-gray-400">© {{ "now"|date("Y") }} Montessori Store – Usage interne</p>
+    </div>
+
+</body>
+</html>
